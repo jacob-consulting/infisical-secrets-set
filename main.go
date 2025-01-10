@@ -5,6 +5,7 @@ import (
 	"context"
 	"log/slog"
 	"os"
+	"io"
 	"strings"
 
 	"github.com/infisical/go-sdk"
@@ -37,7 +38,8 @@ func main() {
 			}
 
 			reader := bufio.NewReader(os.Stdin)
-			secretValue, err := reader.ReadString('\n')
+			secretBytes, err := io.ReadAll(reader)
+			secretValue := string(secretBytes)
 			if err != nil {
 				logger.Error("Failed to read secret from STDIN", "error", err)
 				os.Exit(1)
