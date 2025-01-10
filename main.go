@@ -13,7 +13,7 @@ import (
 
 func main() {
 	var env, path string
-	var force bool
+	var overwrite bool
 
 	rootCmd := &cobra.Command{
 		Use:   "infisical-secrets-set [OPTIONS] SECRET_NAME",
@@ -57,8 +57,8 @@ func main() {
 			err = createSecret()
 			if err != nil {
 				if strings.Contains(err.Error(), "Secret already exist") {
-					if force {
-						fmt.Println("Secret already exists, overwriting due to --force flag.")
+					if overwrite {
+						fmt.Println("Secret already exists, overwriting due to --overwrite flag.")
 						_, err = client.Secrets().Delete(infisical.DeleteSecretOptions{
 							ProjectID:   os.Getenv("INFISICAL_PROJECT_ID"),
 							Environment: env,
@@ -71,7 +71,7 @@ func main() {
 						}
 						err = createSecret()
 					} else {
-						fmt.Println("Secret exists. Use --force to overwrite.")
+						fmt.Println("Secret exists. Use --overwrite to overwrite.")
 						os.Exit(1)
 					}
 				}
@@ -86,7 +86,7 @@ func main() {
 		},
 	}
 
-	rootCmd.Flags().BoolVar(&force, "force", false, "Overwrite secret if exists")
+	rootCmd.Flags().BoolVarP(&overwrite, "overwrite", "o", false, "Overwrite secret if exists")
 	rootCmd.Flags().StringVar(&env, "env", "prod", "Environment to use (dev|stage|prod). Default: prod")
 	rootCmd.Flags().StringVar(&path, "path", "/", "Path to use. Default: /")
 
