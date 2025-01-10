@@ -13,10 +13,26 @@ import (
 )
 
 func main() {
-	var env, path string
+	var env, path, logLevel string
 	var overwrite bool
 
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	var logLevelOption slog.Level
+	switch logLevel {
+	case "debug":
+		logLevelOption = slog.LevelDebug
+	case "info":
+		logLevelOption = slog.LevelInfo
+	case "warning":
+		logLevelOption = slog.LevelWarn
+	case "error":
+		logLevelOption = slog.LevelError
+	default:
+		logLevelOption = slog.LevelInfo
+	}
+
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		Level: logLevelOption,
+	}))
 
 	rootCmd := &cobra.Command{
 		Use:   "infisical-secrets-set [OPTIONS] SECRET_NAME",
@@ -88,6 +104,7 @@ func main() {
 		},
 	}
 
+	rootCmd.Flags().StringVar(&logLevel, "log-level", "info", "Set log level to one of debug|info|warning|error (default \"info\")")
 	rootCmd.Flags().BoolVarP(&overwrite, "overwrite", "o", false, "Overwrite secret if exists")
 	rootCmd.Flags().StringVar(&env, "env", "prod", "Environment to use (dev|stage|prod). Default: prod")
 	rootCmd.Flags().StringVar(&path, "path", "/", "Path to use. Default: /")
