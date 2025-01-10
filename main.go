@@ -3,9 +3,9 @@ package main
 import (
 	"bufio"
 	"context"
+	"io"
 	"log/slog"
 	"os"
-	"io"
 	"strings"
 
 	"github.com/infisical/go-sdk"

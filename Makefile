@@ -1,4 +1,4 @@
 MAKEFLAGS += --always-make
 
 aider:
-	aider --no-auto-commits main.go
+	aider --multiline go.mod main.go
