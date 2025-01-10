@@ -1,6 +1,8 @@
 module infisical-secrets-set
 
-go 1.19
+go 1.21
+
+toolchain go1.23.4
 
 require (
 	github.com/infisical/go-sdk v0.4.7
