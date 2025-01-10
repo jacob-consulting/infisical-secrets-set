@@ -104,7 +104,7 @@ func main() {
 		},
 	}
 
-	rootCmd.Flags().StringVar(&logLevel, "log-level", "info", "Set log level to one of debug|info|warning|error (default \"info\")")
+	rootCmd.Flags().StringVarP(&logLevel, "log-level", "l", "info", "Set log level to one of debug|info|warning|error (default \"info\")")
 	rootCmd.Flags().BoolVarP(&overwrite, "overwrite", "o", false, "Overwrite secret if exists")
 	rootCmd.Flags().StringVar(&env, "env", "prod", "Environment to use (dev|stage|prod). Default: prod")
 	rootCmd.Flags().StringVar(&path, "path", "/", "Path to use. Default: /")
