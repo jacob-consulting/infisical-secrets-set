@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"context"
+	"fmt"
 	"io"
 	"log/slog"
 	"os"
@@ -12,10 +13,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func main() {
-	var env, path, logLevel string
-	var overwrite bool
-
+func configureLogging(logLevel string) *slog.Logger {
 	var logLevelOption slog.Level
 	switch logLevel {
 	case "debug":
@@ -33,12 +31,20 @@ func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 		Level: logLevelOption,
 	}))
+	logger.Info("logging configured", "level", logLevel)
+	return logger
+}
+
+func main() {
+	var env, path, logLevel string
+	var overwrite bool
 
 	rootCmd := &cobra.Command{
 		Use:   "infisical-secrets-set [OPTIONS] SECRET_NAME",
-		Short: "Writes STDIN into infisical with a secret name of SECRET_NAME.",
+		Short: "Writes STDIN to infisical",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
+			var logger = configureLogging(logLevel)
 			secretName := args[0]
 
 			client := infisical.NewInfisicalClient(context.Background(), infisical.Config{
@@ -104,13 +110,13 @@ func main() {
 		},
 	}
 
-	rootCmd.Flags().StringVarP(&logLevel, "log-level", "l", "info", "Set log level to one of debug|info|warning|error (default \"info\")")
-	rootCmd.Flags().BoolVarP(&overwrite, "overwrite", "o", false, "Overwrite secret if exists")
-	rootCmd.Flags().StringVar(&env, "env", "prod", "Environment to use (dev|stage|prod). Default: prod")
-	rootCmd.Flags().StringVar(&path, "path", "/", "Path to use. Default: /")
+	rootCmd.Flags().StringVarP(&logLevel, "log-level", "l", "info", "set log level to one of (debug|info|warning|error)")
+	rootCmd.Flags().BoolVarP(&overwrite, "overwrite", "o", false, "overwrite secret if exists")
+	rootCmd.Flags().StringVar(&env, "env", "prod", "environment to use (dev|stage|prod)")
+	rootCmd.Flags().StringVar(&path, "path", "/", "path to use")
 
 	if err := rootCmd.Execute(); err != nil {
-		logger.Error("Command execution failed", "error", err)
+		fmt.Fprintf(os.Stderr, "number of foo: %s", err)
 		os.Exit(1)
 	}
 }
