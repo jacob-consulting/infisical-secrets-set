@@ -41,7 +41,7 @@ func main() {
 
 	rootCmd := &cobra.Command{
 		Use:   "infisical-secrets-set [OPTIONS] SECRET_NAME",
-		Short: "Writes STDIN to infisical",
+		Short: "Reads STDIN and writes into infisical with a secret name of SECRET_NAME.",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			var logger = configureLogging(logLevel)
