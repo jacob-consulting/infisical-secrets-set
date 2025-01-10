@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"context"
-	"fmt"
+	"log/slog"
 	"os"
 	"strings"
 
@@ -14,6 +14,8 @@ import (
 func main() {
 	var env, path string
 	var overwrite bool
+
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 	rootCmd := &cobra.Command{
 		Use:   "infisical-secrets-set [OPTIONS] SECRET_NAME",
@@ -30,14 +32,14 @@ func main() {
 
 			_, err := client.Auth().UniversalAuthLogin("", "")
 			if err != nil {
-				fmt.Printf("Authentication failed: %v\n", err)
+				logger.Error("Authentication failed", "error", err)
 				os.Exit(1)
 			}
 
 			reader := bufio.NewReader(os.Stdin)
 			secretValue, err := reader.ReadString('\n')
 			if err != nil {
-				fmt.Printf("Failed to read secret value: %v\n", err)
+				logger.Error("Failed to read secret from STDIN", "error", err)
 				os.Exit(1)
 			}
 
@@ -58,7 +60,7 @@ func main() {
 			if err != nil {
 				if strings.Contains(err.Error(), "Secret already exist") {
 					if overwrite {
-						fmt.Println("Secret already exists, overwriting due to --overwrite flag.")
+						logger.Debug("Secret already exists, overwriting due to --overwrite flag.")
 						_, err = client.Secrets().Delete(infisical.DeleteSecretOptions{
 							ProjectID:   os.Getenv("INFISICAL_PROJECT_ID"),
 							Environment: env,
@@ -66,23 +68,21 @@ func main() {
 							SecretPath:  path,
 						})
 						if err != nil {
-							fmt.Printf("Failed to delete existing secret: %v\n", err)
+							logger.Error("Failed to delete existing secret", "error", err)
 							os.Exit(1)
 						}
 						err = createSecret()
 					} else {
-						fmt.Println("Secret exists. Use --overwrite to overwrite.")
+						logger.Warn("Secret exists. Use --overwrite to overwrite.")
 						os.Exit(1)
 					}
 				}
 
 				if err != nil {
-					fmt.Printf("Failed to set secret: %v\n", err)
+					logger.Error("Failed to set secret", "error", err)
 					os.Exit(1)
 				}
 			}
-
-			fmt.Println("Secret set successfully.")
 		},
 	}
 
@@ -91,7 +91,7 @@ func main() {
 	rootCmd.Flags().StringVar(&path, "path", "/", "Path to use. Default: /")
 
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		logger.Error("Command execution failed", "error", err)
 		os.Exit(1)
 	}
 }
