@@ -31,4 +31,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: infisical-secrets-set
-        path: infisical-secrets-set
+        path: dist/*
