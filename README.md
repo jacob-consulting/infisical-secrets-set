@@ -46,3 +46,11 @@ Flags:
 
 ## Libraries
 This tool uses `spf13/cobra` for argument parsing.
+
+## Development
+https://go.dev/doc/install
+```
+mkdir -p ~/go/src
+cd ~/go/src
+go build
+```
