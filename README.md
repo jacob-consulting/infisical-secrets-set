@@ -1,4 +1,8 @@
 # infisical-secrets-set
+The official infisical CLI [cannot be fully configured via environment Variables][i].
+This is a workaround using the [Infisical Go SDK](https://infisical.com/docs/sdks/languages/go).
+
+[i]: https://github.com/Infisical/infisical/issues/2968
 
 ## Environment Variables
 `infisical-secrets-set` consumes the following environment variables to initialize the infisical client:
