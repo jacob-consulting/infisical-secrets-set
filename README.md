@@ -54,3 +54,8 @@ mkdir -p ~/go/src
 cd ~/go/src
 go build
 ```
+
+```
+go install github.com/goreleaser/goreleaser/v2@latest
+goreleaser init
+```
