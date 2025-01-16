@@ -26,3 +26,9 @@ jobs:
         args: release --clean --snapshot
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload assets
+      uses: actions/upload-artifact@v4
+      with:
+        name: infisical-secrets-set
+        path: infisical-secrets-set
